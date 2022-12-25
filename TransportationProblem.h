@@ -12,7 +12,11 @@ class TransportationProblem
 
 	vector<vector<int>> costs;
 
+public:
 	void getUserInput();
+
+	vector<int> getSources();
+	vector<int> getDestinations();
 
 	TransportationProblemSolution solveWithNorthWest();
 	TransportationProblemSolution solveWithVogelApproximation();
