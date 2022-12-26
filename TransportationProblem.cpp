@@ -1,5 +1,9 @@
 #include "TransportationProblem.h"
 #include "Input.h"
+#include <algorithm>
+#include <math.h>
+#include <iostream>
+using namespace std;
 
 void TransportationProblem::getUserInput() {
 	Input input;
@@ -26,7 +30,24 @@ void TransportationProblem::getUserInput() {
 	for (int source = 0; source < numOfSources; source++) {
 		for (int destination = 0; destination < numOfDestinations; destination++) {
 			int cost = input.getInt("Please enter the cost of transportation from Source" + to_string(source + 1) + " to Destination" + to_string(destination + 1));
-			this->costs[source].push_back(cost);
+			costs[source].push_back(cost);
+			maxCostLength = max(maxCostLength, (int)log10(cost));
 		}
 	}
+}
+
+string TransportationProblem::toString() {
+	string result = "";
+	int maxSourceLength = sources.size() + 1;
+	int maxDestinationLength = destinations.size() + 1;
+
+	for (int i = 0; i < sources.size(); i++) {
+		result +=  "S" + to_string(i) + ": " + to_string(sources[i]) + " ";
+	}
+
+	return result;
+}
+
+void TransportationProblem::display() {
+	cout << toString();
 }
