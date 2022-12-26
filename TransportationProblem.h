@@ -11,6 +11,7 @@ class TransportationProblem
 	vector<int> destinations;
 
 	vector<vector<int>> costs;
+	int maxCostLength = 0;
 
 public:
 	void getUserInput();
@@ -22,5 +23,6 @@ public:
 	TransportationProblemSolution solveWithVogelApproximation();
 
 	string toString();
+	void display();
 };
 

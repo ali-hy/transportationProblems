@@ -11,4 +11,5 @@ int main()
 {
     TransportationProblem problem;
     problem.getUserInput();
+    problem.display();
 }
