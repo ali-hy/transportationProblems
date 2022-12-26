@@ -89,8 +89,33 @@ void TransportationProblem::display() {
 
 //SOLVING
 void TransportationProblem::balanceProblem() {
-	
+	int netSupply = sum(sources);
+	int netDemand = sum(destinations);
+
+	int difference = netSupply - netDemand;
+
+	if (!difference) return;
+
+	if (difference > 0) {
+		addDummyDestination(difference);
+	}
+	else {
+		addDummyDestination(-difference);
+	}
 }
+void TransportationProblem::addDummyDestination(int demand) {
+	destinations.push_back(demand);
+	for (int i = 0; i < costs.size(); i++) {
+		costs[i].push_back(0);
+	}
+	dummyDestinationExists = true;
+}
+void TransportationProblem::addDummySource(int supply) {
+	sources.push_back(supply);
+	costs.push_back(vector<int>(5));
+	dummySourceExists = true;
+}
+
 //TransportationProblemSolution TransportationProblem::solveWithNorthWest() {
 //
 //}
