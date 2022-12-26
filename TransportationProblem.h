@@ -12,6 +12,8 @@ class TransportationProblem
 	vector<int> destinations;
 
 	vector<vector<int>> costs;
+	bool dummySourceExists = false;
+	bool dummyDestinationExists = false;
 
 public:
 	void getUserInput();
@@ -21,6 +23,9 @@ public:
 	vector<vector<int>> getCosts();
 
 	void balanceProblem();
+	void addDummyDestination(int demand);
+	void addDummySource(int supply);
+
 	TransportationProblemSolution solveWithNorthWest();
 	TransportationProblemSolution solveWithVogelApproximation();
 
