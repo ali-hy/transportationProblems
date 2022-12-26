@@ -5,49 +5,92 @@
 #include <iostream>
 using namespace std;
 
+int sum(vector<int> arr) {
+	int result = 0;
+	for (int number : arr) {
+		result += number;
+	}
+	return result;
+}
+
+
+// INPUT AND OUTPUT
 void TransportationProblem::getUserInput() {
-	Input input;
+	Cli cli;
 	//Get source details
-	cout << "SOURCES" << endl << "--------" << endl;
-	int numOfSources = input.getInt("Please enter the number of sources");
+	cli.printHeader("Sources");
+	int numOfSources = cli.getInt("Please enter the number of sources:");
 	for (int i = 0; i < numOfSources; i++) {
-		int supply = input.getInt("Please enter the Source" + to_string(i + 1) + "'s supply");
+		int supply = cli.getInt("Enter the Source" + to_string(i + 1) + "'s supply:");
 		sources.push_back(supply);
 	}
 	system("cls");
 	//Get destination details
-	cout << "DESTINATIONS" << endl << "-------------" << endl;
-	int numOfDestinations = input.getInt("Please enter the number of destinations");
+	cli.printHeader("Destinations");
+	int numOfDestinations = cli.getInt("Please enter the number of destinations:");
 	for (int i = 0; i < numOfDestinations; i++) {
-		int demand = input.getInt("Please enter Destination" + to_string(i + 1) + "'s demand");
+		int demand = cli.getInt("Enter Destination" + to_string(i + 1) + "'s demand:");
 		destinations.push_back(demand);
 	}
 	system("cls");
 	//Prepare costs array
 	costs = vector<vector<int>>(numOfSources);
 	//Get cost details
-	cout << "COSTS" << endl << "------" << endl;
 	for (int source = 0; source < numOfSources; source++) {
+		cli.printHeader("Costs");
+		cout << "Enter transportation cost from Source" << source + 1 << " to:" << endl;
 		for (int destination = 0; destination < numOfDestinations; destination++) {
-			int cost = input.getInt("Please enter the cost of transportation from Source" + to_string(source + 1) + " to Destination" + to_string(destination + 1));
+			int cost = cli.getInt("\tDestination" + to_string(destination + 1));
 			costs[source].push_back(cost);
-			maxCostLength = max(maxCostLength, (int)log10(cost));
 		}
+		system("cls");
 	}
 }
+vector<vector<string>> TransportationProblem::toTableData() {
+	vector<vector<string>> tableData;
 
-string TransportationProblem::toString() {
-	string result = "";
-	int maxSourceLength = sources.size() + 1;
-	int maxDestinationLength = destinations.size() + 1;
+	//make header row
+	vector<string> headerRow = {""};
+	for (int i = 0; i < destinations.size(); i++) {
+		headerRow.push_back("D" + to_string(i + 1));
+	}
+	headerRow.push_back("Supply");
+	tableData.push_back(headerRow);
 
+	//make rest of table
 	for (int i = 0; i < sources.size(); i++) {
-		result +=  "S" + to_string(i) + ": " + to_string(sources[i]) + " ";
+		vector<string> row;
+		row.push_back("S" + to_string(i + 1));
+		for (int cost : costs[i]) {
+			row.push_back(to_string(cost));
+		}
+		row.push_back(to_string(sources[i]));
+		tableData.push_back(row);
 	}
 
-	return result;
+	vector<string> demandRow;
+	demandRow.push_back("Demand");
+	for (int demand : destinations) {
+		demandRow.push_back(to_string(demand));
+	}
+	demandRow.push_back("");
+	tableData.push_back(demandRow);
+
+	return tableData;
+}
+void TransportationProblem::display() {
+	Cli cli;
+
+	cli.printHeader("the problem");
+
+	vector<vector<string>> tableData = toTableData();
+	cli.printTable(toTableData());
 }
 
-void TransportationProblem::display() {
-	cout << toString();
+//SOLVING
+void TransportationProblem::balanceProblem() {
+	
 }
+//TransportationProblemSolution TransportationProblem::solveWithNorthWest() {
+//
+//}

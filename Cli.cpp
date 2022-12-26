@@ -3,14 +3,13 @@
 using namespace std;
 
 template<class T>
-vector<T> getColumn(vector<vector<T>>& table, int columnNumber) {
+vector<T> getColumn(vector<vector<T>>const & table, int columnNumber) {
 	vector<T> column;
 	for (int i = 0; i < table.size(); i++) {
 		column.push_back(table[i][columnNumber]);
 	}
-	return column
+	return column;
 }
-
 int getMaxLength(vector<string>& arr) {
 	if (arr.empty()) return -1;
 	int maxLength = 0;
@@ -19,9 +18,10 @@ int getMaxLength(vector<string>& arr) {
 	}
 	return maxLength;
 }
+
 int Cli::getInt(string prompt) {
 	int integer;
-	cout << prompt << endl;
+	cout << prompt << " ";
 	cin >> integer;
 	return integer;
 }
@@ -39,29 +39,29 @@ string Cli::buildCell(string cellData, int minLength) {
 
 	return cell;
 }
-string Cli::buildFirstRow(vector<string>& rowData, vector<int>& minLength) {
+string Cli::buildFirstRow(vector<string>const & rowData, vector<int>& minLength) {
 	if (rowData.empty()) return "";
 
 	string row = "";
 	row += buildFirstCell(rowData[0], minLength[0]);
-	for (int i = 1; i < rowData.size() - 1; i++) {
+	for (int i = 1; i < rowData.size(); i++) {
 		string text = rowData[i];
 		row += buildCell(text, minLength[i]);
 	}
 
 	return row + "\n";
 }
-string Cli::buildRow(vector<string>& rowData, vector<int>& minLength) {
+string Cli::buildRow(vector<string>const & rowData, vector<int>& minLength) {
 	string row = buildFirstRow(rowData, minLength);
 
 	string rowDivision = "";
-	for (string text : rowData) {
+	for (auto text : row) {
 		rowDivision += "-";
 	}
 
 	return rowDivision + "\n" + row;
 }
-string Cli::buildTable(vector<vector<string>>& data) {
+string Cli::buildTable(vector<vector<string>>const & data) {
 	string table = "";
 	vector<int> minLength;
 	for (int i = 0; i < data[0].size(); i++) {
@@ -104,6 +104,6 @@ void Cli::printRow(vector<string>& rowData, vector<int>& minLength) {
 void Cli::printFirstRow(vector<string>& rowData, vector<int>& minLength) {
 	cout << buildFirstRow(rowData, minLength);
 }
-void Cli::printTable(vector<vector<string>>& data) {
+void Cli::printTable(vector<vector<string>>const &data) {
 	cout << buildTable(data);
 }
