@@ -1,20 +1,10 @@
 #include "TransportationProblem.h"
 #include "Cli.h"
-#include <algorithm>
-#include <math.h>
-#include <iostream>
+#include "VogelData.h"
+#include "global.h"
 using namespace std;
 
-int sum(vector<int> arr) {
-	int result = 0;
-	for (int number : arr) {
-		result += number;
-	}
-	return result;
-}
-
-
-// INPUT AND OUTPUT
+//INPUT AND OUTPUT
 void TransportationProblem::getUserInput() {
 	Cli cli;
 	//Get source details
@@ -46,6 +36,10 @@ void TransportationProblem::getUserInput() {
 		system("cls");
 	}
 }
+void TransportationProblem::promptSolve() {
+	
+}
+
 vector<vector<string>> TransportationProblem::toTableData() {
 	vector<vector<string>> tableData;
 
@@ -87,6 +81,22 @@ void TransportationProblem::display() {
 	cli.printTable(toTableData());
 }
 
+//GETTERS AND GETTERS
+int TransportationProblem::getSupply(TransportationVariable route) {
+	return sources[route.source];
+}
+int TransportationProblem::getDemand(TransportationVariable route) {
+	return destinations[route.destination];
+}
+
+void TransportationProblem::reduceSupply(TransportationVariable route, int change) {
+	sources[route.source] -= change;
+}
+void TransportationProblem::reduceDemand(TransportationVariable route, int change) {
+	destinations[route.destination] -= change;
+}
+
+
 //SOLVING
 void TransportationProblem::balanceProblem() {
 	int netSupply = sum(sources);
@@ -116,6 +126,40 @@ void TransportationProblem::addDummySource(int supply) {
 	dummySourceExists = true;
 }
 
+
+// north-west
 //TransportationProblemSolution TransportationProblem::solveWithNorthWest() {
 //
 //}
+
+// vogel
+TransportationProblemSolution TransportationProblem::solveWithVogelApproximation() {
+	TransportationProblemSolution solution(costs);
+	VogelData vogelData(costs);
+
+	while (vogelData.topPriorityMinCost().source > 0) {
+		vogelStep(solution, vogelData);
+	}
+
+	return solution;
+}
+
+void TransportationProblem::vogelStep(TransportationProblemSolution &solution, VogelData &vogelData){
+	TransportationVariable bestRoute = vogelData.topPriorityMinCost();
+	pair<DIRECTION, int> toClose = abuseRoute(bestRoute, solution);
+	vogelData.close(toClose);
+}
+
+
+/* -------- FOR BOTH ALGORITHMS ------- */
+pair<DIRECTION, int> TransportationProblem::abuseRoute(TransportationVariable route, TransportationProblemSolution& solution) {
+	int quantity = min(getSupply(route), getDemand(route));
+
+	reduceSupply(route, quantity);
+	reduceDemand(route, quantity);
+
+	solution.setQuantity(route, quantity);
+
+	DIRECTION direction = getSupply(route) == 0 ? row : col;
+	return make_pair(direction, quantity);
+}

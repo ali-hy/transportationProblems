@@ -132,12 +132,15 @@
     <ClCompile Include="transportationProblems.cpp" />
     <ClCompile Include="TransportationProblemSolution.cpp" />
     <ClCompile Include="TransportationVariable.cpp" />
+    <ClCompile Include="VogelData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cli.h" />
+    <ClInclude Include="global.h" />
     <ClInclude Include="TransportationProblem.h" />
     <ClInclude Include="TransportationProblemSolution.h" />
     <ClInclude Include="TransportationVariable.h" />
+    <ClInclude Include="VogelData.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

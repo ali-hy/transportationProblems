@@ -30,6 +30,9 @@
     <ClCompile Include="Cli.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VogelData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TransportationProblem.h">
@@ -42,6 +45,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Cli.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VogelData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="global.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
