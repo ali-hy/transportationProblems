@@ -1,5 +1,5 @@
 #pragma once
-#include <string>
+#include "global.h"
 using namespace std;
 
 //class implementation in TransportationVariable.cpp

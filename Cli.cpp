@@ -1,15 +1,9 @@
 #include <iostream>
 #include "Cli.h"
+#include "collectionManipulation.h"
 using namespace std;
 
-template<class T>
-vector<T> getColumn(vector<vector<T>>const & table, int columnNumber) {
-	vector<T> column;
-	for (int i = 0; i < table.size(); i++) {
-		column.push_back(table[i][columnNumber]);
-	}
-	return column;
-}
+
 int getMaxLength(vector<string>& arr) {
 	if (arr.empty()) return -1;
 	int maxLength = 0;
@@ -25,7 +19,6 @@ int Cli::getInt(string prompt) {
 	cin >> integer;
 	return integer;
 }
-
 string Cli::buildFirstCell(string cellData, int minLength) {
 	while (cellData.size() < minLength) {
 		cellData += " ";

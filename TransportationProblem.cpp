@@ -1,18 +1,8 @@
 #include "TransportationProblem.h"
 #include "Cli.h"
-#include <algorithm>
-#include <math.h>
-#include <iostream>
+#include "VogelData.h"
+#include "global.h"
 using namespace std;
-
-int sum(vector<int> arr) {
-	int result = 0;
-	for (int number : arr) {
-		result += number;
-	}
-	return result;
-}
-
 
 // INPUT AND OUTPUT
 void TransportationProblem::getUserInput() {
@@ -116,6 +106,16 @@ void TransportationProblem::addDummySource(int supply) {
 	dummySourceExists = true;
 }
 
+
+// north-west
 //TransportationProblemSolution TransportationProblem::solveWithNorthWest() {
 //
 //}
+
+// vogel
+TransportationProblemSolution TransportationProblem::solveWithVogelApproximation() {
+	TransportationProblemSolution solution(costs);
+	VogelData vogelData(costs);
+
+
+}
