@@ -3,14 +3,18 @@
 using namespace std;
 
 VogelData::VogelData(vector<vector<int>>& costs) : //initializer for costs (set costs[attribute] to costs[parameter])
-costs(costs) {
+costsWithoutClosed(costs) {
 	autoSetMins();
 	updateTopPriority();
 }
 
 void VogelData::closeRow(int n) {
 	closedRows.insert(n);
+	cout << "rowMins.size(): " << rowMins.size() << endl;
 	rowMins[n] = make_pair(-1, -1);
+	for (int i = 0; i < costsWithoutClosed[0].size(); i++) {
+		costsWithoutClosed[n][i] = INT_MAX;
+	}
 	updateRowPriority(n);
 	autoSetTopPriority();
 	for (int i = 0; i < colMins.size(); i++) {
@@ -24,6 +28,9 @@ void VogelData::closeRow(int n) {
 void VogelData::closeColumn(int n) {
 	closedColumns.insert(n);
 	colMins[n] = make_pair(-1, -1);
+	for (int i = 0; i < costsWithoutClosed.size(); i++) {
+		costsWithoutClosed[i][n] = INT_MAX;
+	}
 	updateColPriority(n);
 	autoSetTopPriority();
 	for (int i = 0; i < rowMins.size(); i++) {
@@ -36,9 +43,11 @@ void VogelData::closeColumn(int n) {
 void VogelData::close(pair<DIRECTION, int> toClose) {
 	switch (toClose.first){
 	case row:
+		cout << "closing row" << endl;
 		closeRow(toClose.second);
 		break;
 	case col:
+		cout << "closing col " << toClose.second << endl;
 		closeColumn(toClose.second);
 		break;
 	default:
@@ -48,14 +57,14 @@ void VogelData::close(pair<DIRECTION, int> toClose) {
 
 void VogelData::autoSetRowMins() {
 	if (!rowMins.empty()) throw "ERORR: rowMins has already been set";
-	for (auto& row : costs) {
+	for (auto& row : costsWithoutClosed) {
 		rowMins.push_back(findMin2(row));
 	}
 }
 void VogelData::autoSetColMins() {
 	if (!colMins.empty()) throw "ERORR: colMins has already been set";
-	for (int i = 0; i < costs[0].size(); i++) {
-		vector<int> col = getColumn(costs, i);
+	for (int i = 0; i < costsWithoutClosed[0].size(); i++) {
+		vector<int> col = getColumn(costsWithoutClosed, i);
 		colMins.push_back(findMin2(col));
 	}
 }
@@ -69,32 +78,11 @@ void VogelData::autoSetMins() {
 	}
 }
 
-vector<int> VogelData::rowWithoutClosed(int n) {
-	if (closedRows.count(n)) {
-		return vector<int>();
-	}
-	vector<int> row(costs[n]);
-	for (auto i : closedRows) {
-		row.erase(row.begin() + n);
-	}
-	return row;
-}
-vector<int> VogelData::colWithoutClosed(int n) {
-	if (closedColumns.count(n)) {
-		return vector<int>();
-	}
-	vector<int> col(getColumn(costs, n));
-	for (auto i : closedColumns) {
-		col.erase(col.begin());
-	}
-	return col;
-}
-
 void VogelData::updateRowMin2(int n) {
-	rowMins[n] = findMin2(rowWithoutClosed(n));
+	rowMins[n] = findMin2(costsWithoutClosed[n]);
 }
 void VogelData::updateColMin2(int n) {
-	colMins[n] = findMin2(colWithoutClosed(n));
+	colMins[n] = findMin2(getColumn(costsWithoutClosed, n));
 }
 
 void VogelData::updateRowPriority(int n) {
@@ -140,6 +128,7 @@ void VogelData::autoSetTopPriority() {
 		topPriority = make_pair(col, colsPriority);
 		return;
 	}
+
 	topPriority = colPriorities[colsPriority] > rowPriorities[rowsPriority] ? 
 		topPriority = make_pair(col, colsPriority) :
 		topPriority = make_pair(row, rowsPriority);
@@ -152,10 +141,20 @@ TransportationVariable VogelData::topPriorityMinCost() {
 	if (topPriority.first == row) {
 		return TransportationVariable(topPriority.second, rowMins[topPriority.second].first);
 	}
-	if (topPriority.first == col) {
+	else if (topPriority.first == col) {
 		return TransportationVariable(colMins[topPriority.second].first, topPriority.second);
 	}
+	else {
+		cout << "ERORR: direction can only be row or col" << endl;
+	}
 }
-//pair<DIRECTION, int> VogelData::getTopPriority() {
-//	return topPriority;
-//}
+
+int VogelData::getTopPriority(){
+	int n = topPriority.second;
+	if (topPriority.first == row) {
+		return rowPriorities[n];
+	}
+	else{
+		return colPriorities[n];
+	}
+}

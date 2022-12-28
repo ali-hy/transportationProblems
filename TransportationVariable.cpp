@@ -1,5 +1,5 @@
 #include "TransportationVariable.h"
-#include <string.h>
+#include <string>
 using namespace std;
 
 TransportationVariable::TransportationVariable(int source, int destination) {

@@ -1,13 +1,17 @@
 #pragma once
-#include <string>
-#include <vector>
+#include "global.h"
 using namespace std;
 
 class Cli
 {
 public:
+	void clear() {
+		system("cls");
+	}
+
 	//Input
 	int getInt(string prompt = "");
+	char getChar(string prompt = "");
 
 	//String building
 	string buildFirstCell(string cellData, int minLength = 0);

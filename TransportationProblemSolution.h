@@ -27,5 +27,6 @@ public:
 	void optimize();
 
 	vector<vector<string>> toTableData();
+	void display();
 };
 

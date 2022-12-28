@@ -1,12 +1,13 @@
 #pragma once
 #include <set>
-#include "TransportationVariable.h";
 #include "global.h"
+#include "TransportationVariable.h"
 using namespace std;
 
 class VogelData
 {
-	vector<vector<int>>& costs;
+	vector<vector<int>> costsWithoutClosed;
+
 
 	set<int> closedRows;
 	set<int> closedColumns;
@@ -45,5 +46,6 @@ public:
 
 	void updateTopPriority();
 	TransportationVariable topPriorityMinCost();
+	int getTopPriority();
 };
 

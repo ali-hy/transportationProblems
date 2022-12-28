@@ -14,6 +14,9 @@ class TransportationProblem
 	vector<vector<int>> costs;
 	bool dummySourceExists = false;
 	bool dummyDestinationExists = false;
+
+	int getSupply(TransportationVariable route);
+	int getDemand(TransportationVariable route);
 	
 	//TransportationProblemSolution vogelSolution;
 
@@ -21,16 +24,12 @@ public:
 	void getUserInput();
 	void promptSolve();
 
-	vector<int> getSources();
-	vector<int> getDestinations();
-	vector<vector<int>> getCosts();
-
-	int getSupply(TransportationVariable route);
-	int getDemand(TransportationVariable route);
+	//vector<int> getSources();
+	//vector<int> getDestinations();
+	//vector<vector<int>> getCosts();
 
 	void reduceSupply(TransportationVariable route, int change);
 	void reduceDemand(TransportationVariable route, int change);
-
 
 	// Problem Preparation
 	void balanceProblem();

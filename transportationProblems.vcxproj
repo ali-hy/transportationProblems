@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Cli.cpp" />
+    <ClCompile Include="global.cpp" />
     <ClCompile Include="TransportationProblem.cpp" />
     <ClCompile Include="transportationProblems.cpp" />
     <ClCompile Include="TransportationProblemSolution.cpp" />

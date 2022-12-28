@@ -37,7 +37,18 @@ void TransportationProblem::getUserInput() {
 	}
 }
 void TransportationProblem::promptSolve() {
-	
+	Cli cli;
+	cli.clear();
+	cli.printHeader("solution");
+	char chosenMethod = cli.getChar("Define the method you'd prefer for solving (n for north-west, v for vogel): ");
+	TransportationProblemSolution* solution = NULL;
+	if (chosenMethod == 'n') {
+		solution = new TransportationProblemSolution(solveWithNorthWest());
+	}
+	else if (chosenMethod == 'v') {
+		solution = new TransportationProblemSolution(solveWithVogelApproximation());
+	}
+	solution->display();
 }
 
 vector<vector<string>> TransportationProblem::toTableData() {
@@ -74,11 +85,10 @@ vector<vector<string>> TransportationProblem::toTableData() {
 }
 void TransportationProblem::display() {
 	Cli cli;
-
+	//cli.clear();
 	cli.printHeader("the problem");
-
-	vector<vector<string>> tableData = toTableData();
 	cli.printTable(toTableData());
+	cout << endl;
 }
 
 //GETTERS AND GETTERS
@@ -128,17 +138,23 @@ void TransportationProblem::addDummySource(int supply) {
 
 
 // north-west
-//TransportationProblemSolution TransportationProblem::solveWithNorthWest() {
-//
-//}
+TransportationProblemSolution TransportationProblem::solveWithNorthWest() {
+	return TransportationProblemSolution(costs);
+}
 
 // vogel
 TransportationProblemSolution TransportationProblem::solveWithVogelApproximation() {
 	TransportationProblemSolution solution(costs);
 	VogelData vogelData(costs);
 
-	while (vogelData.topPriorityMinCost().source > 0) {
+	cout << "top priority min cost" << vogelData.topPriorityMinCost().source << ",  " << vogelData.topPriorityMinCost().destination << endl;
+
+	display();
+
+	int n = 7;
+	while (n--) {
 		vogelStep(solution, vogelData);
+		display();
 	}
 
 	return solution;
@@ -160,6 +176,16 @@ pair<DIRECTION, int> TransportationProblem::abuseRoute(TransportationVariable ro
 
 	solution.setQuantity(route, quantity);
 
-	DIRECTION direction = getSupply(route) == 0 ? row : col;
-	return make_pair(direction, quantity);
+	DIRECTION direction = row;
+	int n = -1;
+
+	if (!getSupply(route)) {
+		n = route.destination;
+	}
+	else {
+		direction = col;
+		n = route.source;
+	}
+
+	return make_pair(direction, n);
 }

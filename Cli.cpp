@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Cli.h"
-#include "collectionManipulation.h"
+#include "global.h"
 using namespace std;
 
 
@@ -18,6 +18,12 @@ int Cli::getInt(string prompt) {
 	cout << prompt << " ";
 	cin >> integer;
 	return integer;
+}
+char Cli::getChar(string prompt) {
+	cout << prompt << " ";
+	char c;
+	cin >> c;
+	return c;
 }
 string Cli::buildFirstCell(string cellData, int minLength) {
 	while (cellData.size() < minLength) {
@@ -98,5 +104,5 @@ void Cli::printFirstRow(vector<string>& rowData, vector<int>& minLength) {
 	cout << buildFirstRow(rowData, minLength);
 }
 void Cli::printTable(vector<vector<string>>const &data) {
-	cout << buildTable(data);
+	cout << buildTable(data) << endl;
 }
