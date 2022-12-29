@@ -3,6 +3,8 @@
 #include "Cli.h"
 #include "global.h"
 
+//3 25 20 30 4 15 16 12 19 45 17 21 30 14 18 19 31 12 16 18 24
+
 TransportationProblemSolution::TransportationProblemSolution(vector<vector<int>>& costs) : 
 costs(costs) {
 	cout << "constructing solution \n";
@@ -10,17 +12,15 @@ costs(costs) {
 	for (auto& row : quantities) {
 		row.resize(costs[0].size());
 	}
-	cout << "rows of quantities: " << quantities.size() << endl;
-	cout << "cols of quantities: " << quantities[0].size() << endl;
 }
 
 void TransportationProblemSolution::autoSetBasicVariables() {
 	basicVariables = vector<TransportationVariable>();
-	for (int i = 0; i < costs.size(); i++) {
-		vector<int> row = costs[i];
+	for (int i = 0; i < quantities.size(); i++) {
+		vector<int> row = quantities[i];
 		for (int j = 0; j < row.size(); j++) {
 			int quantity = row[j];
-			if (quantity) {
+			if (quantity > 0) {
 				basicVariables.push_back(TransportationVariable(i, j));
 			}
 		}
@@ -48,7 +48,7 @@ int TransportationProblemSolution::getQuantity(TransportationVariable route) {
 int TransportationProblemSolution::getNetCost() {
 	int netCost = 0;
 	for (auto var : basicVariables) {
-		netCost += getQuantity(var);
+		netCost += getQuantity(var) * getCost(var);
 	}
 	return netCost;
 }
@@ -82,4 +82,11 @@ void TransportationProblemSolution::display() {
 	//cli.clear();
 	cli.printHeader("solution");
 	cli.printTable(toTableData());
+
+	autoSetBasicVariables();
+	cout << endl << "basic variables: " << endl;\
+	for (auto bv : basicVariables) {
+		cout << bv.toString() << endl;
+	}
+	cout << "NET cost: $" << getNetCost();
 }

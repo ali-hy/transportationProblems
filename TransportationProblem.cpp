@@ -4,6 +4,8 @@
 #include "global.h"
 using namespace std;
 
+//3 25 20 30 4 15 16 12 19 45 17 21 30 14 18 19 31 12 16 18 24
+
 //INPUT AND OUTPUT
 void TransportationProblem::getUserInput() {
 	Cli cli;
@@ -44,11 +46,12 @@ void TransportationProblem::promptSolve() {
 	TransportationProblemSolution* solution = NULL;
 	if (chosenMethod == 'n') {
 		solution = new TransportationProblemSolution(solveWithNorthWest());
+		solution->display();
 	}
 	else if (chosenMethod == 'v') {
-		solution = new TransportationProblemSolution(solveWithVogelApproximation());
+		//solution = new TransportationProblemSolution(solveWithVogelApproximation());
+		cout << "vogel solution not implemented";
 	}
-	solution->display();
 }
 
 vector<vector<string>> TransportationProblem::toTableData() {
@@ -139,32 +142,52 @@ void TransportationProblem::addDummySource(int supply) {
 
 // north-west
 TransportationProblemSolution TransportationProblem::solveWithNorthWest() {
-	return TransportationProblemSolution(costs);
-}
-
-// vogel
-TransportationProblemSolution TransportationProblem::solveWithVogelApproximation() {
+	balanceProblem();
 	TransportationProblemSolution solution(costs);
-	VogelData vogelData(costs);
-
-	cout << "top priority min cost" << vogelData.topPriorityMinCost().source << ",  " << vogelData.topPriorityMinCost().destination << endl;
-
-	display();
-
-	int n = 7;
-	while (n--) {
-		vogelStep(solution, vogelData);
-		display();
+	TransportationVariable currentRoute(0, 0);
+	
+	bool keepgoing = true;
+	while (keepgoing) {
+		auto doneWith = abuseRoute(currentRoute,solution);
+		switch (doneWith.first) {
+		case row:
+			currentRoute.source++;
+			break;
+		case col:
+			currentRoute.destination++;
+			break;
+		default:
+			cout << "ouch";
+		}
+		keepgoing = currentRoute.source < sources.size() && currentRoute.destination < destinations.size();
 	}
 
 	return solution;
 }
 
-void TransportationProblem::vogelStep(TransportationProblemSolution &solution, VogelData &vogelData){
-	TransportationVariable bestRoute = vogelData.topPriorityMinCost();
-	pair<DIRECTION, int> toClose = abuseRoute(bestRoute, solution);
-	vogelData.close(toClose);
-}
+// vogel
+//TransportationProblemSolution TransportationProblem::solveWithVogelApproximation() {
+//	TransportationProblemSolution solution(costs);
+//	VogelData vogelData(costs);
+//
+//	cout << "top priority min cost" << vogelData.topPriorityMinCost().source << ",  " << vogelData.topPriorityMinCost().destination << endl;
+//
+//	display();
+//
+//	int n = 7;
+//	while (n--) {
+//		vogelStep(solution, vogelData);
+//		display();
+//	}
+//
+//	return solution;
+//}
+//
+//void TransportationProblem::vogelStep(TransportationProblemSolution &solution, VogelData &vogelData){
+//	TransportationVariable bestRoute = vogelData.topPriorityMinCost();
+//	pair<DIRECTION, int> toClose = abuseRoute(bestRoute, solution);
+//	vogelData.close(toClose);
+//}
 
 
 /* -------- FOR BOTH ALGORITHMS ------- */

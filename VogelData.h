@@ -6,8 +6,7 @@ using namespace std;
 
 class VogelData
 {
-	vector<vector<int>> costsWithoutClosed;
-
+	vector<vector<pair<bool, int>>> costsWithoutClosed;
 
 	set<int> closedRows;
 	set<int> closedColumns;
@@ -15,37 +14,24 @@ class VogelData
 	vector<int> rowPriorities;
 	vector<int> colPriorities;
 
-	void updateRowPriority(int n);
-	void updateColPriority(int n);
+	int getColPriority(int n);
+	int getRowPriority(int n);
+	int getMinsDif(vector<pair<bool, int>> arr);
 
-	void updateRowPriorities();
-	void updateColPriorities();
-	void updatePriorities();
+	vector<int> getColsPriorities();
+	vector<int> getRowsPriorities();
 
-	pair<DIRECTION, int> topPriority;
-	void autoSetTopPriority();
 
-	vector<pair<int, int>> rowMins;
-	vector<pair<int, int>> colMins;
-
-	void autoSetRowMins();
-	void autoSetColMins();
-	void autoSetMins();
-
-	vector<int> rowWithoutClosed(int n);
-	vector<int> colWithoutClosed(int n);
-
-	void updateRowMin2(int n);
-	void updateColMin2(int n);
 public:
 	VogelData(vector<vector<int>>& costs);
+
+
 
 	void closeRow(int n);
 	void closeColumn(int n);
 	void close(pair<DIRECTION, int> toClose);
 
 	void updateTopPriority();
-	TransportationVariable topPriorityMinCost();
+	pair<TransportationVariable, int> getBestRoute();
 	int getTopPriority();
 };
-

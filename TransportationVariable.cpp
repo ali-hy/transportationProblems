@@ -8,5 +8,5 @@ TransportationVariable::TransportationVariable(int source, int destination) {
 }
 
 string TransportationVariable::toString() {
-	return "(S" + to_string(source) + ", D" + to_string(destination) + ")";
+	return "(S" + to_string(source + 1) + ", D" + to_string(destination + 1) + ")";
 }

@@ -21,6 +21,16 @@ inline int indexOfMax(vector<T> arr) {
 }
 
 template<class T>
+inline int indexOfMin(vector<T> arr) {
+	if (arr.empty()) return -1;
+	int min = 0;
+	for (int i = 1; i < arr.size(); i++) {
+		min = arr[i] < arr[min] ? i : min;
+	}
+	return min;
+}
+
+template<class T>
 inline vector<T> getColumn(vector<vector<T>>const& table, int colNumber) {
 	vector<T> col;
 	for (int i = 0; i < table.size(); i++) {
