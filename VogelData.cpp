@@ -1,5 +1,6 @@
 #include "VogelData.h"
 #include "global.h"
+#include "Cli.h"
 using namespace std;
 
 VogelData::VogelData(vector<vector<int>>& costs){
@@ -7,7 +8,7 @@ VogelData::VogelData(vector<vector<int>>& costs){
 		vector<int> row = costs[i];
 		costsWithoutClosed.push_back(vector<pair<bool,int>> ());
 		for (int cost : row) {
-			costsWithoutClosed[i].push_back(make_pair(false, cost));
+			costsWithoutClosed[i].push_back(make_pair(true, cost));
 		}
 	}
 }
@@ -18,14 +19,15 @@ int VogelData::getColPriority(int n) {
 	return getMinsDif(col);
 }
 int VogelData::getRowPriority(int n) {
-	vector<pair<bool, int>> row = getColumn(costsWithoutClosed, n);
+	vector<pair<bool, int>> row = costsWithoutClosed[n];
 	
 	return getMinsDif(row);
 }
 
 vector<int> VogelData::getColsPriorities() {
 	vector<int> colsPriorities;
-	for (int i = 0; i < costsWithoutClosed.size(); i++) {
+	for (int i = 0; i < costsWithoutClosed[0].size(); i++) {
+		//cout << "col" << i << ": ";
 		colsPriorities.push_back(getColPriority(i));
 	}
 	return colsPriorities;
@@ -33,6 +35,7 @@ vector<int> VogelData::getColsPriorities() {
 vector<int> VogelData::getRowsPriorities() {
 	vector<int> rowsPriorities;
 	for (int i = 0; i < costsWithoutClosed.size(); i++) {
+		//cout << "row" << i << ": ";
 		rowsPriorities.push_back(getRowPriority(i));
 	}
 	return rowsPriorities;
@@ -46,35 +49,93 @@ pair<TransportationVariable, int> VogelData::getBestRoute() {
 
 	if (rowsPriorities[rowMax] < 0 && colsPriorities[colMax] < 0) return make_pair(TransportationVariable(-1, -1), -1);
 	if (rowsPriorities[rowMax] > colsPriorities[colMax]) {
-		int col = indexOfMin(costsWithoutClosed);
-		return make_pair(TransportationVariable(rowMax, col), 1);
+		int col = indexOfMin(costsWithoutClosed[rowMax]);
+		return make_pair(TransportationVariable(rowMax, col), max(rowsPriorities[rowMax], colsPriorities[colMax]));
 	} else {
-		return make_pair(TransportationVariable(indexOfMin(rowsPriorities), colMax), 1);
+		int row = indexOfMin(getColumn(costsWithoutClosed, rowMax));
+		return make_pair(TransportationVariable(row, colMax), max(rowsPriorities[rowMax], colsPriorities[colMax]));
 	}
 }
 
 int VogelData::getMinsDif(vector<pair<bool, int>> arr) {
 	int smallest = INT_MAX, smallest2 = INT_MAX - 1;
 	for (auto i : arr) {
-		if (i.first == false) continue;
+		if (!i.first) continue;
 		if (i.second < smallest) {
-			if (smallest == INT_MAX) {
-				smallest2 = i.second;
-			}
-			else {
-				smallest2 = smallest;
-			}
+			smallest2 = smallest;
 			smallest = i.second;
 		}
 		else if (i.second < smallest2) {
 			smallest2 = i.second;
 		}
 	}
+	if (smallest < INT_MAX && smallest2 == INT_MAX) {
+		return 0;
+	}
+	//cout << smallest2 << " - " << smallest << endl;
 	return smallest2 - smallest;
 }
 
+void VogelData::closeColumn(int n) {
+	if (closedColumns.count(n)) cout << "closing a closed column" << endl;
+	closedColumns.insert(n);
+	for (int i = 0; i < costsWithoutClosed.size(); i++) {
+		costsWithoutClosed[i][n].first = false;
+	}
+}
+void VogelData::closeRow(int n) {
+	if (closedRows.count(n)) cout << "closing a closed row" << endl;
+	closedRows.insert(n);
+	for (int i = 0; i < costsWithoutClosed[0].size(); i++) {
+		costsWithoutClosed[n][i].first = false;
+	}
+}
+void VogelData::close(pair<DIRECTION, int> toClose) {
+	if (toClose.first == row) {
+		closeRow(toClose.second);
+	}
+	else {
+		closeColumn(toClose.second);
+	}
+}
 
-
+vector<vector<string>> VogelData::toTableData() {
+	const int height = costsWithoutClosed.size();
+	const int width = costsWithoutClosed[0].size();
+	vector<vector<string>> tableData;
+	//header row
+	vector<string> headerRow({""});
+	for (int i = 0; i < width; i++) {
+		headerRow.push_back("D" + to_string(i + 1));
+	}
+	headerRow.push_back("Difference");
+	tableData.push_back(headerRow);
+	//body rows
+	for (int i = 0; i < height; i++) {
+		vector<string> row;
+		row.push_back("S" + to_string(i + 1));
+		for (int j = 0; j < width; j++) {
+			auto cost = costsWithoutClosed[i][j];
+			row.push_back(cost.first ? to_string(cost.second) : "--");
+		}
+		row.push_back(to_string(getRowPriority(i)));
+		tableData.push_back(row);
+	}
+	//footer row
+	vector<string> footerRow({ "Difference" });
+	for (int i = 0; i < width; i++) {
+		footerRow.push_back(to_string(getColPriority(i)));
+	}
+	auto br = getBestRoute();
+	footerRow.push_back( br.first.toString() + " " +to_string(br.second));
+	tableData.push_back(footerRow);
+	return tableData;
+}
+void VogelData::display() {
+	Cli cli;
+	cli.printHeader("vogel tableau");
+	cli.printTable(toTableData());
+}
 
 //void VogelData::closeRow(int n) {
 //	closedRows.insert(n);

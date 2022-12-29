@@ -31,7 +31,8 @@ public:
 	void closeColumn(int n);
 	void close(pair<DIRECTION, int> toClose);
 
-	void updateTopPriority();
 	pair<TransportationVariable, int> getBestRoute();
-	int getTopPriority();
+	
+	vector<vector<string>> toTableData();
+	void display();
 };

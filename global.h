@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include "Cli.h"
 using namespace std;
 
 enum DIRECTION
@@ -13,21 +14,29 @@ enum DIRECTION
 template<class T>
 inline int indexOfMax(vector<T> arr) {
 	if (arr.empty()) return -1;
-	int max = 0;
+	int mx = 0;
 	for (int i = 1; i < arr.size(); i++) {
-		max = arr[i] > arr[max] ? i : max;
+		mx = arr[i] > arr[mx] ? i : mx;
 	}
-	return max;
+	return mx;
 }
 
-template<class T>
-inline int indexOfMin(vector<T> arr) {
-	if (arr.empty()) return -1;
-	int min = 0;
-	for (int i = 1; i < arr.size(); i++) {
-		min = arr[i] < arr[min] ? i : min;
+inline int indexOfMin(vector<pair<bool, int>> arr) {
+	cout << "getting min of ";
+	vector<string> s;
+	for (int i = 0; i < arr.size(); i++) {
+		if (arr[i].first) {cout << (arr[i].second); continue; }
+		cout << ("--");
+		cout << " ";
 	}
-	return min;
+	cout << endl;
+	int mn = 0;
+	for (int i = 0; i < arr.size(); i++) {
+		if (!arr[i].first) continue;
+		if (!arr[mn].first) { mn = i; continue; }
+		mn = arr[i].second < arr[mn].second ? i : mn;
+	}
+	return arr[mn].first ? mn : -1;
 }
 
 template<class T>

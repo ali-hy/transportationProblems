@@ -49,8 +49,8 @@ void TransportationProblem::promptSolve() {
 		solution->display();
 	}
 	else if (chosenMethod == 'v') {
-		//solution = new TransportationProblemSolution(solveWithVogelApproximation());
-		cout << "vogel solution not implemented";
+		solution = new TransportationProblemSolution(solveWithVogelApproximation());
+		//cout << "vogel solution not implemented";
 	}
 }
 
@@ -166,32 +166,40 @@ TransportationProblemSolution TransportationProblem::solveWithNorthWest() {
 }
 
 // vogel
-//TransportationProblemSolution TransportationProblem::solveWithVogelApproximation() {
-//	TransportationProblemSolution solution(costs);
-//	VogelData vogelData(costs);
-//
-//	cout << "top priority min cost" << vogelData.topPriorityMinCost().source << ",  " << vogelData.topPriorityMinCost().destination << endl;
-//
-//	display();
-//
-//	int n = 7;
-//	while (n--) {
-//		vogelStep(solution, vogelData);
-//		display();
-//	}
-//
-//	return solution;
-//}
-//
-//void TransportationProblem::vogelStep(TransportationProblemSolution &solution, VogelData &vogelData){
-//	TransportationVariable bestRoute = vogelData.topPriorityMinCost();
-//	pair<DIRECTION, int> toClose = abuseRoute(bestRoute, solution);
-//	vogelData.close(toClose);
-//}
+TransportationProblemSolution TransportationProblem::solveWithVogelApproximation() {
+	balanceProblem();
+
+	TransportationProblemSolution solution(costs);
+	VogelData vogelData(costs);
+
+	display();
+	vogelData.display();
+
+	bool keepgoing = true;
+	int n = 4;
+	while (n--) {
+		keepgoing = vogelStep(solution, vogelData);
+		vogelData.display();
+	}
+
+	solution.display();
+	display();
+
+	return solution;
+}
+
+bool TransportationProblem::vogelStep(TransportationProblemSolution &solution, VogelData &vogelData){
+	pair<TransportationVariable, int> bestRoute = vogelData.getBestRoute();
+	if (bestRoute.second < 0) return false;
+	pair<DIRECTION, int> toClose = abuseRoute(bestRoute.first, solution);
+	vogelData.close(toClose);
+	return true;
+}
 
 
 /* -------- FOR BOTH ALGORITHMS ------- */
 pair<DIRECTION, int> TransportationProblem::abuseRoute(TransportationVariable route, TransportationProblemSolution& solution) {
+	cout << "abusing " << route.toString() << endl;
 	int quantity = min(getSupply(route), getDemand(route));
 
 	reduceSupply(route, quantity);
@@ -203,11 +211,11 @@ pair<DIRECTION, int> TransportationProblem::abuseRoute(TransportationVariable ro
 	int n = -1;
 
 	if (!getSupply(route)) {
-		n = route.destination;
+		n = route.source;
 	}
 	else {
 		direction = col;
-		n = route.source;
+		n = route.destination;
 	}
 
 	return make_pair(direction, n);

@@ -88,5 +88,5 @@ void TransportationProblemSolution::display() {
 	for (auto bv : basicVariables) {
 		cout << bv.toString() << endl;
 	}
-	cout << "NET cost: $" << getNetCost();
+	cout << "NET cost: $" << getNetCost() << endl;
 }

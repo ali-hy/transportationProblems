@@ -42,7 +42,7 @@ public:
 
 	//Vogel Approximation
 	TransportationProblemSolution solveWithVogelApproximation();
-	void vogelStep(TransportationProblemSolution& solution, VogelData& vogelData);
+	bool vogelStep(TransportationProblemSolution& solution, VogelData& vogelData);
 
 	vector<vector<string>> toTableData();
 	void display();
